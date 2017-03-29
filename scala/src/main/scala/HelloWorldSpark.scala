@@ -1,5 +1,4 @@
 import org.apache.spark.{SparkConf, SparkContext}
-
 /**
   * Created by daniel on 3/23/17.
   */

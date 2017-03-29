@@ -4,7 +4,7 @@
 		module="flightdelay_2.11"
 		revision="1.0"
 		status="integration"
-		publication="20170329134537"
+		publication="20170329145923"
 	>
 		<description>
 		FlightDelay
@@ -35,5 +35,7 @@
 		<dependency org="org.scala-lang" name="scala-compiler" rev="2.11.7" conf="scala-tool->default,optional(default)"/>
 		<dependency org="org.scala-lang" name="scala-library" rev="2.11.7" conf="scala-tool->default,optional(default);compile->default(compile)"/>
 		<dependency org="org.apache.spark" name="spark-core_2.11" rev="2.1.0" conf="compile->default(compile)"/>
+		<dependency org="org.scalaj" name="scalaj-http_2.11" rev="2.3.0" conf="compile->default(compile)"/>
+		<dependency org="net.liftweb" name="lift-json_2.11" rev="2.6+" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>

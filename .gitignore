@@ -1,0 +1,5 @@
+gitPush.sh
+.*
+*~
+.DS_Store
+data/raw/DOT_2008.csv

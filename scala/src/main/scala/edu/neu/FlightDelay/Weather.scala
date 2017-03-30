@@ -11,16 +11,32 @@ object Weather {
   case class coord(Lat: Double, Long: Double)
 
   def main(args: Array[String]): Unit ={
-    println(getWeather(2010,1,4,"IAD"))
-    println(getWeather(2010,1,4,"BOS"))
-    println(getWeather(2010,1,4,"IAD"))
-    println(getWeather(2010,1,4,"BOS"))
-    println(getWeather(2010,1,4,"BOS"))
-    println(getWeather(2003,2,17,"BOS"))
+    getAllWeather()
+  }
+  def getAllWeather(): String ={
+    val year = 0
+    val month = 1
+    val day = 2
+    val origin = 16
+    val dest = 17
+    var cnt = 0;
+    val dot = Source.fromFile("../data/raw/DOT_2008.csv")
+    val dot_weather = scala.tools.nsc.io.File("../data/DOT_2008_Weather.csv")
+
+    for(line <- dot.getLines().drop(20000)){
+      val cols = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)").map(_.trim)
+      //println(s"${cols(year)}|${cols(month)}|${cols(day)}|${cols(origin)}|${cols(dest)}|$cnt")
+      val or  = getWeather(cols(year).toInt,cols(month).toInt,cols(day).toInt,cols(origin))
+      val dst = getWeather(cols(year).toInt,cols(month).toInt,cols(day).toInt,cols(dest))
+      dot_weather.appendAll(line.trim+","+or.Snow+","+or.Prcp+","+dst.Snow+","+dst.Prcp+"\n")
+      cnt+=1
+      if(cnt%10000==0){println(cnt)}
+    }
+    return ""
   }
   def getWeather(year: Integer, month: Integer, day:Integer, aPCode: String): SnowPrcp= {
     val sp = checkLocally(year,month,day,aPCode)
-    if(sp.Snow != -1 && sp.Prcp != -1){//found locally
+    if(sp.Snow != -2 && sp.Prcp != -2){//found locally
       return sp
     }
     val date = year+"-"+"%02d".format(month)+"-"+"%02d".format(day)
@@ -35,8 +51,12 @@ object Weather {
       return SnowPrcp(-1,-1)
     val json = parse(response.body)
     val results = (json \\ "results").children
-    var prcp = -1.0;
+    var prcp = -1.0;//If error
     var snow = -1.0;
+    if(results.size>1){//Some locations don't track snow
+      prcp = 0.0;
+      snow = 0.0;
+    }
     for(result <- results){
       if((result \\ "datatype").values == "PRCP"){
         prcp = (result \\ "value").values.toString().toDouble
@@ -47,13 +67,17 @@ object Weather {
     }
     val SP = SnowPrcp(snow,prcp)
     saveLocally(year,month,day,aPCode,SP)
+    if(SP.Snow == -1 && SP.Prcp == -1){
+      println("ERROR"+year+","+month+","+day+","+aPCode+","+zipCode)
+    }
+    if(SP.Snow > 0 && SP.Prcp > 0){
+      println("Weather:"+year+","+month+","+day+","+aPCode+","+zipCode)
+    }
     return SP
   }
   def saveLocally(year: Integer, month: Integer, day:Integer, aPCode: String, sp: SnowPrcp)= {
-    if(sp.Prcp != -1 && sp.Snow != -1) {
       val localWeather = scala.tools.nsc.io.File("../data/local_weather.csv")
       localWeather.appendAll(year + "," + month + "," + day + "," + aPCode + "," + sp.Snow + "," + sp.Prcp + "\n")
-    }
   }
   def checkLocally(year: Integer, month: Integer, day:Integer, aPCode: String):SnowPrcp = {
     val localWeather = Source.fromFile("../data/local_weather.csv")
@@ -63,11 +87,16 @@ object Weather {
         return SnowPrcp(cols(4).toDouble,cols(5).toDouble)
       }
     }
-    return SnowPrcp(-1,-1)
+    return SnowPrcp(-2,-2)
   }
   def getAPZip(aPCode:String):String = {
+    val zipCode = checkAPLocally(aPCode)
+    if(zipCode!= "Not Found"){
+      return zipCode
+    }
     val cd = getAPLatLong(aPCode)
     val zip = getAPZip(cd)
+    saveAPLocally(aPCode,zip)
     return zip
   }
   def getAPZip(cd:coord):String={
@@ -83,6 +112,20 @@ object Weather {
       }
     }
     return zip
+  }
+  def checkAPLocally(aPCode: String):String = {
+    val apcodes = Source.fromFile("../data/APCode_ZipCode.csv")
+    for(line <- apcodes.getLines().drop(1)){
+      val cols = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)").map(_.trim)
+      if(cols(0) == aPCode){
+        return cols(1)
+      }
+    }
+    return "Not Found"
+  }
+  def saveAPLocally(aPCode: String, zip:String)= {
+    val apcodes = scala.tools.nsc.io.File("../data/APCode_ZipCode.csv")
+    apcodes.appendAll(aPCode + "," + zip + "\n")
   }
   def getAPLatLong(aPCode:String):coord ={
     val airports = Source.fromFile("../data/raw/airports.csv")

@@ -20,10 +20,12 @@ object Weather {
     val origin = 16
     val dest = 17
     var cnt = 0;
-    val dot = Source.fromFile("../data/raw/DOT_2008.csv")
-    val dot_weather = scala.tools.nsc.io.File("../data/DOT_2008_Weather.csv")
-
-    for(line <- dot.getLines().drop(20000)){
+    val dot = Source.fromFile("../data/raw/DOT_2008_1.csv")
+    val dot_weather = scala.tools.nsc.io.File("../data/DOT_2008_1_Weather.csv")
+    if(!dot_weather.exists){
+      dot_weather.appendAll("Year,Month,DayofMonth,DayOfWeek,DepTime,CRSDepTime,ArrTime,CRSArrTime,UniqueCarrier,FlightNum,TailNum,ActualElapsedTime,CRSElapsedTime,AirTime,ArrDelay,DepDelay,Origin,Dest,Distance,TaxiIn,TaxiOut,Cancelled,CancellationCode,Diverted,CarrierDelay,WeatherDelay,NASDelay,SecurityDelay,LateAircraftDelay,OriginSnow,OriginPrcp,DestSnow,DestPrcp\n")
+    }
+    for(line <- dot.getLines().drop(100000)){
       val cols = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)").map(_.trim)
       //println(s"${cols(year)}|${cols(month)}|${cols(day)}|${cols(origin)}|${cols(dest)}|$cnt")
       val or  = getWeather(cols(year).toInt,cols(month).toInt,cols(day).toInt,cols(origin))
@@ -31,6 +33,7 @@ object Weather {
       dot_weather.appendAll(line.trim+","+or.Snow+","+or.Prcp+","+dst.Snow+","+dst.Prcp+"\n")
       cnt+=1
       if(cnt%10000==0){println(cnt)}
+      if(cnt%400000==0){return "" }
     }
     return ""
   }
@@ -39,6 +42,7 @@ object Weather {
     if(sp.Snow != -2 && sp.Prcp != -2){//found locally
       return sp
     }
+    Thread.sleep(10000)
     val date = year+"-"+"%02d".format(month)+"-"+"%02d".format(day)
     val zipCode = getAPZip(aPCode)
     val response = Http("https://www.ncdc.noaa.gov/cdo-web/api/v2/data")
@@ -66,21 +70,29 @@ object Weather {
       }
     }
     val SP = SnowPrcp(snow,prcp)
-    saveLocally(year,month,day,aPCode,SP)
+
     if(SP.Snow == -1 && SP.Prcp == -1){
       println("ERROR"+year+","+month+","+day+","+aPCode+","+zipCode)
+      return SP;
     }
-    if(SP.Snow > 0 && SP.Prcp > 0){
-      println("Weather:"+year+","+month+","+day+","+aPCode+","+zipCode)
-    }
+//    if(SP.Snow > 0 && SP.Prcp > 0) {
+//      println("Weather:" + year + "," + month + "," + day + "," + aPCode + "," + zipCode)
+//    }
+    saveLocally(year,month,day,aPCode,SP)
+
     return SP
   }
   def saveLocally(year: Integer, month: Integer, day:Integer, aPCode: String, sp: SnowPrcp)= {
-      val localWeather = scala.tools.nsc.io.File("../data/local_weather.csv")
+      val localWeather = scala.tools.nsc.io.File("../data/local_weather_"+year+"_"+month+".csv")
+      if(!localWeather.exists) {
+        localWeather.appendAll("Year,Month,Day,APCode,Snow,Prcp\n")
+      }
       localWeather.appendAll(year + "," + month + "," + day + "," + aPCode + "," + sp.Snow + "," + sp.Prcp + "\n")
   }
   def checkLocally(year: Integer, month: Integer, day:Integer, aPCode: String):SnowPrcp = {
-    val localWeather = Source.fromFile("../data/local_weather.csv")
+    val localWeatherf = scala.tools.nsc.io.File("../data/local_weather_"+year+"_"+month+".csv")
+    if(!localWeatherf.exists) {return SnowPrcp(-2,-2)}
+    val localWeather = Source.fromFile("../data/local_weather_"+year+"_"+month+".csv")
     for(line <- localWeather.getLines().drop(1)){
       val cols = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)").map(_.trim)
       if(cols(0).toInt == year && cols(1).toInt == month && cols(2).toInt == day && cols(3) == aPCode){

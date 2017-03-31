@@ -1,8 +1,12 @@
 package edu.neu.FlightDelay
 import net.liftweb.json._
+import play.api.libs.ws.ning.NingWSClient
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
+import scala.concurrent.duration._
 import scala.io.Source
-import scalaj.http.Http
+import scala.util.{Failure, Success}
 /**
   * Created by Daniel Eichman on 3/29/17.
   */
@@ -11,29 +15,33 @@ object Weather {
   case class coord(Lat: Double, Long: Double)
 
   def main(args: Array[String]): Unit ={
-    getAllWeather()
+    for( a <- 2 to 12){
+      getAllWeather(2008,a)
+      println("Completed "+a)
+    }
+    //print(getWeather(2008,1,2,"BLI"))
   }
-  def getAllWeather(): String ={
+  def getAllWeather(y: Integer, m: Integer): String ={
     val year = 0
     val month = 1
     val day = 2
     val origin = 16
     val dest = 17
     var cnt = 0;
-    val dot = Source.fromFile("../data/raw/DOT_2008_1.csv")
-    val dot_weather = scala.tools.nsc.io.File("../data/DOT_2008_1_Weather.csv")
+    val dot = Source.fromFile("../data/raw/DOT_"+y+"_"+m+".csv")
+    val dot_weather = scala.tools.nsc.io.File("../data/DOT_"+y+"_"+m+"_Weather.csv")
     if(!dot_weather.exists){
       dot_weather.appendAll("Year,Month,DayofMonth,DayOfWeek,DepTime,CRSDepTime,ArrTime,CRSArrTime,UniqueCarrier,FlightNum,TailNum,ActualElapsedTime,CRSElapsedTime,AirTime,ArrDelay,DepDelay,Origin,Dest,Distance,TaxiIn,TaxiOut,Cancelled,CancellationCode,Diverted,CarrierDelay,WeatherDelay,NASDelay,SecurityDelay,LateAircraftDelay,OriginSnow,OriginPrcp,DestSnow,DestPrcp\n")
     }
-    for(line <- dot.getLines().drop(100000)){
+    for(line <- dot.getLines().drop(1)){
       val cols = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)").map(_.trim)
       //println(s"${cols(year)}|${cols(month)}|${cols(day)}|${cols(origin)}|${cols(dest)}|$cnt")
       val or  = getWeather(cols(year).toInt,cols(month).toInt,cols(day).toInt,cols(origin))
       val dst = getWeather(cols(year).toInt,cols(month).toInt,cols(day).toInt,cols(dest))
       dot_weather.appendAll(line.trim+","+or.Snow+","+or.Prcp+","+dst.Snow+","+dst.Prcp+"\n")
       cnt+=1
-      if(cnt%10000==0){println(cnt)}
-      if(cnt%400000==0){return "" }
+      if(cnt%1000==0){println(cnt)}
+      //if(cnt%22000==0){return "" }
     }
     return ""
   }
@@ -42,42 +50,69 @@ object Weather {
     if(sp.Snow != -2 && sp.Prcp != -2){//found locally
       return sp
     }
-    Thread.sleep(10000)
     val date = year+"-"+"%02d".format(month)+"-"+"%02d".format(day)
     val zipCode = getAPZip(aPCode)
-    val response = Http("https://www.ncdc.noaa.gov/cdo-web/api/v2/data")
-                  .header("token","oPXGWqHtTMSmdZGZJQmaZwXGLeWzbuBx")
-                  .param("datasetid", "GHCND")
-                  .param("locationid","ZIP:"+zipCode)
-                  .param("startdate",date)
-                  .param("enddate",date).asString
-    if(response.isError)
-      return SnowPrcp(-1,-1)
-    val json = parse(response.body)
-    val results = (json \\ "results").children
+    val wsClient = NingWSClient()
+    val response = wsClient.url("https://www.ncdc.noaa.gov/cdo-web/api/v2/data")
+            .withQueryString("datasetid" -> "GHCND",
+                             "locationid" -> ("ZIP:"+zipCode),
+                              "startdate" -> date,
+                              "enddate" -> date)
+            //.withHeaders("token" -> "oPXGWqHtTMSmdZGZJQmaZwXGLeWzbuBx").get()//D.Eichman@outlook.com
+            .withHeaders("token" -> "pHUqSdEVFTlkBeAgKjSjRzDlxrPoRZPE").get()//eichman.d@huksy.neu.edu
+    response.map { wsResponse =>
+        if (! (200 to 299).contains(wsResponse.status)) {
+          sys.error(s"Received unexpected status ${wsResponse.status} : ${wsResponse.body}")
+          return SnowPrcp(-1,-1)
+        }
+      }
+    var json = parse("")
+    response.onComplete{
+      case Success(r) => {
+        json = parse(r.body)
+      }
+      case Failure(t) => System.err.println("An error has happend: "+ t.getMessage())
+    }
+    try{
+      Await.ready(response,100000 millis)
+    } catch {
+      case _ : Throwable=>  {
+        println("ERROR_TY: "+year+","+month+","+day+","+aPCode+","+zipCode)
+        Thread.sleep(100000)
+      }
+    }
+    wsClient.close()
+    if(json.values == None){
+      println("ERROR_NONE: "+year+","+month+","+day+","+aPCode+","+zipCode)
+      println(json.values)
+    }
+    if((json \ "status").values == "429"){
+      println("OVer daily limit")
+      System.exit(1)
+    }
     var prcp = -1.0;//If error
     var snow = -1.0;
-    if(results.size>1){//Some locations don't track snow
+    val results = (json \\ "results").children
+    if(results.size>0){//Some locations don't track snow
       prcp = 0.0;
       snow = 0.0;
     }
     for(result <- results){
-      if((result \\ "datatype").values == "PRCP"){
-        prcp = (result \\ "value").values.toString().toDouble
+      if((result \ "datatype").values == "PRCP"){
+        prcp = (result \ "value").values.toString().toDouble
       }
-      if((result \\ "datatype").values == "SNOW"){
-        snow = (result \\ "value").values.toString().toDouble
+      if((result \ "datatype").values == "SNOW"){
+        snow = (result \ "value").values.toString().toDouble
       }
     }
     val SP = SnowPrcp(snow,prcp)
 
     if(SP.Snow == -1 && SP.Prcp == -1){
-      println("ERROR"+year+","+month+","+day+","+aPCode+","+zipCode)
-      return SP;
+      println("ERROR_-1-1: "+year+","+month+","+day+","+aPCode+","+zipCode)
+      println(json.values)
+      //saveLocally(year,month,day,aPCode,SnowPrcp(0,0))//Data is probably missing from NOAA save as 0
+      return SnowPrcp(0,0);//Data is probably missin gform NOAA save as 0
     }
-//    if(SP.Snow > 0 && SP.Prcp > 0) {
-//      println("Weather:" + year + "," + month + "," + day + "," + aPCode + "," + zipCode)
-//    }
     saveLocally(year,month,day,aPCode,SP)
 
     return SP

@@ -2,6 +2,8 @@ gitPush.sh
 .*
 *~
 .DS_Store
+data/DOT_2008_1_Weather.csv
+data/DOT_2008_2_Weather.csv
 data/raw/DOT_2008.csv
 data/raw/DOT_2008_1.csv
 data/raw/DOT_2008_10.csv

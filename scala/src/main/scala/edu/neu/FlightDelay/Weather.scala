@@ -59,7 +59,8 @@ object Weather {
                               "startdate" -> date,
                               "enddate" -> date)
             //.withHeaders("token" -> "oPXGWqHtTMSmdZGZJQmaZwXGLeWzbuBx").get()//D.Eichman@outlook.com
-            .withHeaders("token" -> "pHUqSdEVFTlkBeAgKjSjRzDlxrPoRZPE").get()//eichman.d@huksy.neu.edu
+            //.withHeaders("token" -> "pHUqSdEVFTlkBeAgKjSjRzDlxrPoRZPE").get()//eichman.d@huksy.neu.edu
+            .withHeaders("token" -> "DPoPhSzBFWxWAUAgWepNjHjAvebofHBQ").get()//AJK
     response.map { wsResponse =>
         if (! (200 to 299).contains(wsResponse.status)) {
           sys.error(s"Received unexpected status ${wsResponse.status} : ${wsResponse.body}")

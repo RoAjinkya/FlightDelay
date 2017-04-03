@@ -15,11 +15,11 @@ object Weather {
   case class coord(Lat: Double, Long: Double)
 
   def main(args: Array[String]): Unit ={
-    for( a <- 2 to 12){
+    for( a <- 9 to 12){
       getAllWeather(2008,a)
       println("Completed "+a)
     }
-    //print(getWeather(2008,1,2,"BLI"))
+    print(getWeather(2008,1,2,"BLI"))
   }
   def getAllWeather(y: Integer, m: Integer): String ={
     val year = 0
@@ -27,7 +27,7 @@ object Weather {
     val day = 2
     val origin = 16
     val dest = 17
-    var cnt = 0;
+    var cnt = 0
     val dot = Source.fromFile("../data/raw/DOT_"+y+"_"+m+".csv")
     val dot_weather = scala.tools.nsc.io.File("../data/DOT_"+y+"_"+m+"_Weather.csv")
     if(!dot_weather.exists){

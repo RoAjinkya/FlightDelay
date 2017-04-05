@@ -15,7 +15,7 @@ object Weather {
   case class coord(Lat: Double, Long: Double)
 
   def main(args: Array[String]): Unit ={
-    for( a <- 9 to 12){
+    for( a <- 12 to 12){
       getAllWeather(2008,a)
       println("Completed "+a)
     }
@@ -59,8 +59,8 @@ object Weather {
                               "startdate" -> date,
                               "enddate" -> date)
             //.withHeaders("token" -> "oPXGWqHtTMSmdZGZJQmaZwXGLeWzbuBx").get()//D.Eichman@outlook.com
-            //.withHeaders("token" -> "pHUqSdEVFTlkBeAgKjSjRzDlxrPoRZPE").get()//eichman.d@huksy.neu.edu
-            .withHeaders("token" -> "DPoPhSzBFWxWAUAgWepNjHjAvebofHBQ").get()//AJK
+            .withHeaders("token" -> "pHUqSdEVFTlkBeAgKjSjRzDlxrPoRZPE").get()//eichman.d@huksy.neu.edu
+            //.withHeaders("token" -> "DPoPhSzBFWxWAUAgWepNjHjAvebofHBQ").get()//AJK
     response.map { wsResponse =>
         if (! (200 to 299).contains(wsResponse.status)) {
           sys.error(s"Received unexpected status ${wsResponse.status} : ${wsResponse.body}")
@@ -111,7 +111,7 @@ object Weather {
     if(SP.Snow == -1 && SP.Prcp == -1){
       println("ERROR_-1-1: "+year+","+month+","+day+","+aPCode+","+zipCode)
       println(json.values)
-      //saveLocally(year,month,day,aPCode,SnowPrcp(0,0))//Data is probably missing from NOAA save as 0
+      saveLocally(year,month,day,aPCode,SnowPrcp(0,0))//Data is probably missing from NOAA save as 0
       return SnowPrcp(0,0);//Data is probably missin gform NOAA save as 0
     }
     saveLocally(year,month,day,aPCode,SP)

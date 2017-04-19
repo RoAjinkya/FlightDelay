@@ -1,5 +1,3 @@
-import java.util.Calendar
-
 import org.apache.spark.{SparkConf, SparkContext}
 import org.joda.time.{DateTimeConstants, LocalDate}
 
@@ -14,7 +12,7 @@ object HolidayClassification {
 
   def main(args: Array[String]): Unit = {
 
-    System.setProperty("hadoop.home.dir", "D:\\MS STUDY\\csye 7200 BDSEUScala\\Assignments\\Final Project\\spark-2.1.0-bin-hadoop2.7")
+    //System.setProperty("hadoop.home.dir", "D:\\MS STUDY\\csye 7200 BDSEUScala\\Assignments\\Final Project\\spark-2.1.0-bin-hadoop2.7")
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]")
     val sc = new SparkContext(conf)
     val readFile = sc.textFile("test123.csv")

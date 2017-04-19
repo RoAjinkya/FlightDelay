@@ -1774,9 +1774,9 @@
 [debug] 	[NOT REQUIRED] org.scala-sbt#test-interface;1.0!test-interface.jar
 [debug] 	[NOT REQUIRED] org.scala-sbt#apply-macro;0.13.13!apply-macro.jar
 [debug] 	[NOT REQUIRED] org.scala-sbt#template-resolver;0.1!template-resolver.jar
-[debug] :: resolution report :: resolve 8861ms :: artifacts dl 196ms
+[debug] :: resolution report :: resolve 4421ms :: artifacts dl 111ms
 [debug] 	report for flightdelay#flightdelay$sbt_2.10;1.0 default produced in /Users/daniel/OneDrive/Documents/Northeastern/CSYE7200Scala/FlightDelay/scala/target/resolution-cache/reports/flightdelay-flightdelay$sbt_2.10-default.xml
-[debug] 	resolve done (8861ms resolve - 196ms download)
+[debug] 	resolve done (4421ms resolve - 111ms download)
 [debug] Using inline dependencies specified in Scala.
 [debug] :: resolving dependencies :: flightdelay#flightdelay$sources_2.10;1.0
 [debug] 	confs: [default]
@@ -2470,6 +2470,6 @@
 [debug] 	[NOT REQUIRED] org.scala-lang#scala-compiler;2.10.6!scala-compiler.jar(src)
 [debug] 	[NOT REQUIRED] org.scala-sbt#interface;0.13.13!interface.jar(src)
 [debug] 	[NOT REQUIRED] org.scala-sbt#logging;0.13.13!logging.jar(src)
-[debug] :: resolution report :: resolve 440ms :: artifacts dl 53ms
+[debug] :: resolution report :: resolve 933ms :: artifacts dl 89ms
 [debug] 	report for flightdelay#flightdelay$sources_2.10;1.0 default produced in /Users/daniel/OneDrive/Documents/Northeastern/CSYE7200Scala/FlightDelay/scala/target/resolution-cache/reports/flightdelay-flightdelay$sources_2.10-default.xml
-[debug] 	resolve done (440ms resolve - 53ms download)
+[debug] 	resolve done (933ms resolve - 89ms download)

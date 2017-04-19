@@ -1,32 +1,22 @@
 
-import org.apache.spark.mllib.classification.{SVMModel, SVMWithSGD}
-import org.apache.spark.mllib.evaluation.BinaryClassificationMetrics
-import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.ml.regression.LinearRegression
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.io.Source
-import java.io._
-
-import com.typesafe.config
-import org.apache.spark
-
-import scalaj.http._
-import org.apache.spark.{SparkConf, SparkContext}
-import org.dmg.pmml.Coefficients
 
 
 object ajinkya {
 
   def  main(args: Array[String]): Unit = {
     //System.setProperty("hadoop.home.dir", "D:\\MS STUDY\\csye 7200 BDSEUScala\\Assignments\\Final Project\\spark-2.1.0-bin-hadoop2.7")
-    val conf = new SparkConf().setAppName(" Count").setMaster("local")
+    val conf = new SparkConf().setAppName("Flight Delay").setMaster("local")
     val sc = new SparkContext(conf)
 
 
 
 
-    val jssFile = Source.fromFile("Holiday.csv").getLines().toList //fromFile(“/home/walker/Downloads/data.csv”).getLines().toList
+    val jssFile = Source.fromFile("../data/test_data/Holiday.csv").getLines().toList //fromFile(“/home/walker/Downloads/data.csv”).getLines().toList
 
     import java.io._
 

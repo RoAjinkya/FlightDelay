@@ -15,7 +15,7 @@ object HolidayClassification {
     //System.setProperty("hadoop.home.dir", "D:\\MS STUDY\\csye 7200 BDSEUScala\\Assignments\\Final Project\\spark-2.1.0-bin-hadoop2.7")
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]")
     val sc = new SparkContext(conf)
-    val readFile = sc.textFile("../data/test123.csv")
+    val readFile = sc.textFile("../data/test_data/DOT_2008_Weather_test.csv")
 
     // getting the first 4 relevent columns of the csv file. Year, month, date, day
     val colData = readFile.map(line => {
@@ -26,8 +26,8 @@ object HolidayClassification {
     //remove the header row
     val newData = colData.mapPartitionsWithIndex { (idx, iter) => if (idx == 0) iter.drop(1) else iter }
 
-    val dot = Source.fromFile("../data/test123.csv")
-    val dot_holiday = scala.tools.nsc.io.File("../data/Holiday_test.csv")
+    val dot = Source.fromFile("../data/test_data/DOT_2008_Weather_test.csv")
+    val dot_holiday = scala.tools.nsc.io.File("../data/test_data/DOT_2008_WH_test.csv")
     if(!dot_holiday.exists){
       dot_holiday.appendAll("Year,Month,DayofMonth,DayOfWeek,DepTime,CRSDepTime,ArrTime,CRSArrTime,UniqueCarrier,FlightNum,TailNum,ActualElapsedTime,CRSElapsedTime,AirTime,ArrDelay,DepDelay,Origin,Dest,Distance,TaxiIn,TaxiOut,Cancelled,CancellationCode,Diverted,CarrierDelay,WeatherDelay,NASDelay,SecurityDelay,LateAircraftDelay,OriginSnow,OriginPrcp,DestSnow,DestPrcp,Holiday\n")
     }

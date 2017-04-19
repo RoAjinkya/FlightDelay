@@ -1,5 +1,8 @@
 
 import org.apache.spark.ml.regression.LinearRegression
+import org.apache.spark.mllib.classification.{SVMModel, SVMWithSGD}
+import org.apache.spark.mllib.evaluation.BinaryClassificationMetrics
+import org.apache.spark.mllib.util.MLUtils
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -31,11 +34,11 @@ object flightDelayModel {
 
 val spark = SparkSession.builder().master("local").getOrCreate()
 
-    val training = spark.read.format("libsvm").load(svmPath) //. format(“libsvm”).load(“/home/walker/Downloads/data.svm”)
+    val modelSvmData = spark.read.format("libsvm").load(svmPath) //. format(“libsvm”).load(“/home/walker/Downloads/data.svm”)
 
     val lr = new LinearRegression().setMaxIter(10).setRegParam(0.3).setElasticNetParam(0.8)
 
-    val lrModel = lr.fit(training)
+    val lrModel = lr.fit(modelSvmData)
 
     println(s"Coefficients:${lrModel.coefficients} + Intercept: ${lrModel.intercept}")
 
@@ -47,12 +50,11 @@ val spark = SparkSession.builder().master("local").getOrCreate()
     println(s"r2: ${trainingSummary.r2}")
     println(s"Coefficients: ${lrModel.coefficients} Intercept: ${lrModel.intercept} " )
 
-      }
-      }
+
 
 
     // Load training data in LIBSVM format
-    /*val data = MLUtils.loadLibSVMFile(sc, "Holiday.csv")
+    val data = MLUtils.loadLibSVMFile(sc, csvPath)
 
     // Split data into training (60%) and test (40%).
     val splits = data.randomSplit(Array(0.6, 0.4), seed = 11L)
@@ -81,8 +83,9 @@ val spark = SparkSession.builder().master("local").getOrCreate()
     // Save and load model
 
     model.save(sc, "scalaSVMWithSGDModel")
-    val sameModel = SVMModel.load(sc, "tarscalaSVMWithSGDModel")*/
+    val sameModel = SVMModel.load(sc, "tarscalaSVMWithSGDModel")
 
 
-
+  }
+}
 

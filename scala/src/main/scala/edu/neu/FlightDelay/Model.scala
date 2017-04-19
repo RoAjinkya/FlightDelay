@@ -6,23 +6,23 @@ import org.apache.spark.{SparkConf, SparkContext}
 import scala.io.Source
 
 
-object ajinkya {
+object flightDelayModel {
 
   def  main(args: Array[String]): Unit = {
     //System.setProperty("hadoop.home.dir", "D:\\MS STUDY\\csye 7200 BDSEUScala\\Assignments\\Final Project\\spark-2.1.0-bin-hadoop2.7")
     val conf = new SparkConf().setAppName("Flight Delay").setMaster("local")
     val sc = new SparkContext(conf)
+    val svmPath = "../data/test_data/test.svm"
+    val csvPath = "../data/test_data/DOT_2008_WH_test.csv"
 
 
-
-
-    val jssFile = Source.fromFile("../data/test_data/Holiday.csv").getLines().toList //fromFile(“/home/walker/Downloads/data.csv”).getLines().toList
+    val jssFile = Source.fromFile(csvPath).getLines().toList //fromFile(“/home/walker/Downloads/data.csv”).getLines().toList
 
     import java.io._
 
-    val pw = new PrintWriter(new File("data.svm" ))
+    val pw = new PrintWriter(new File(svmPath ))
 
-    val  bufferedSource = Source.fromFile("Holiday.csv")
+    val  bufferedSource = Source.fromFile(csvPath)
     for(line<- bufferedSource.getLines().drop(1)){
       val cols = line.split(",").map(_.trim)
         pw.write(""+cols);
@@ -31,7 +31,7 @@ object ajinkya {
 
 val spark = SparkSession.builder().master("local").getOrCreate()
 
-    val training = spark.read.format("libsvm").load("data.svm") //. format(“libsvm”).load(“/home/walker/Downloads/data.svm”)
+    val training = spark.read.format("libsvm").load(svmPath) //. format(“libsvm”).load(“/home/walker/Downloads/data.svm”)
 
     val lr = new LinearRegression().setMaxIter(10).setRegParam(0.3).setElasticNetParam(0.8)
 

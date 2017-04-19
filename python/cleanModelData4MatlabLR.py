@@ -26,14 +26,13 @@ df = df[0:50000]
 #Split data into test and train
 msk = np.random.rand(len(df)) < 0.8
 train = df[msk]
-test = df
-[~msk]
+test = df[~msk]
 print(df.head())
-#save to files
+#Save training data
 train["Delay"].to_csv("../data/modeldata_W/DOT_2008_"+str(month)+"_W_train_labels.csv",index=False,header=False)
 del train["Delay"]
 train.to_csv("../data/modeldata_W/DOT_2008_"+str(month)+"_W_train_data.csv",index=False,header=False)
-
+#save testing data
 test["Delay"].to_csv("../data/modeldata_W/DOT_2008_"+str(month)+"_W_test_labels.csv",index=False,header=False)
 del test["Delay"]
 test.to_csv("../data/modeldata_W/DOT_2008_"+str(month)+"_W_test_data.csv",index=False,header=False)

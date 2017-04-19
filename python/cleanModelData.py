@@ -8,11 +8,14 @@ year = "2008"
 subfolder = "test_data"
 
 df = pd.read_csv("../data/"+subfolder+"/DOT_2008_WH_test.csv")
-df["TotalDelay"]=df["ArrDelay"] + df["DepDelay"]#find total dealy
-df = df[["TotalDelay","DayOfWeek","Origin","Dest","OriginSnow","OriginPrcp","DestSnow","DestPrcp","Holiday"]]
-df["Origin"] = df["Origin"].apply(lambda x:APCode2Num(x))
-df["Dest"] = df["Dest"].apply(lambda x:APCode2Num(x))
-
+df["Delay"]=df["ArrDelay"]#find total dealy
+df = df[["Delay","DayOfWeek","Origin","Dest","OriginSnow","OriginPrcp","DestSnow","DestPrcp","Holiday"]]
+df["Origin"] = df["Origin"].apply(lambda x:x+"_ORIGIN")
+df["Dest"] = df["Dest"].apply(lambda x:x+"_DEST")
+df = pd.concat([df, pd.get_dummies(df['Origin'])], axis=1)
+df = pd.concat([df, pd.get_dummies(df['Dest'])], axis=1)
+del df["Origin"]
+del df["Dest"]
 print(df.head())
  
-df.to_csv("../data/"+subfolder+"/DOT_2008_WHD_test.csv")
+df.to_csv("../data/"+subfolder+"/DOT_2008_WHD_test.csv",index=False)

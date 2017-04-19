@@ -19,7 +19,7 @@ import org.dmg.pmml.Coefficients
 object ajinkya {
 
   def  main(args: Array[String]): Unit = {
-    System.setProperty("hadoop.home.dir", "D:\\MS STUDY\\csye 7200 BDSEUScala\\Assignments\\Final Project\\spark-2.1.0-bin-hadoop2.7")
+    //System.setProperty("hadoop.home.dir", "D:\\MS STUDY\\csye 7200 BDSEUScala\\Assignments\\Final Project\\spark-2.1.0-bin-hadoop2.7")
     val conf = new SparkConf().setAppName("Word Count").setMaster("local")
     val sc = new SparkContext(conf)
 

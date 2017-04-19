@@ -4,7 +4,7 @@
 		module="flightdelay$sources_2.10"
 		revision="1.0"
 		status="integration"
-		publication="20170331221859"
+		publication="20170419002032"
 	/>
 	<configurations>
 		<conf name="default" visibility="public" description=""/>

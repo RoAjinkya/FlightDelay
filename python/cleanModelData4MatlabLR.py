@@ -27,7 +27,7 @@ df = df[0:50000]
 msk = np.random.rand(len(df)) < 0.8
 train = df[msk]
 test = df[~msk]
-print(df.head())
+print(test.size())
 #Save training data
 train["Delay"].to_csv("../data/modeldata_W/DOT_2008_"+str(month)+"_W_train_labels.csv",index=False,header=False)
 del train["Delay"]

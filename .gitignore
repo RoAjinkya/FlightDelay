@@ -2,4 +2,5 @@ gitPush.sh
 .*
 *~
 .DS_Store
+data/modeldata_W/DOT_2008_W.csv
 data/raw/DOT_2008.csv

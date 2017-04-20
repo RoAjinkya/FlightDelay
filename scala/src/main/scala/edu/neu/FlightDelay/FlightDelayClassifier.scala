@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.ml.classification.{MultilayerPerceptronClassificationModel, MultilayerPerceptronClassifier}
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 /**
   * Created by daniel on 3/23/17.
   */
@@ -15,7 +15,7 @@ object FlightDelayClassifier {
     .appName("FlightDelayClassifier")
     .config("spark.master", "local")
     .getOrCreate()
-
+  val modelName = "SampleClassifier"
   def trainModel(dataPath:String): (MultilayerPerceptronClassificationModel, Dataset[Row], Dataset[Row]) ={
     // Load the data stored in LIBSVM format as a DataFrame.
     val data = spark.read.format("libsvm")
@@ -41,10 +41,11 @@ object FlightDelayClassifier {
     val model = trainer.fit(train)
     return (model,train,test)
   }
-  def saveModel(model:MultilayerPerceptronClassificationModel ): Unit ={
+  def saveModel(model:MultilayerPerceptronClassificationModel ): String ={
     val df = DateTimeFormatter.ofPattern("<MM-dd-yyy>hh-mm-ss")
     val now = ZonedDateTime.now()
-    model.save("../model/SampleClassifier"+df.format(now)+".model")
+    model.save("../model/"+modelName+df.format(now)+".model")
+    return modelName+df.format(now)
   }
   def findAccuracy(model:MultilayerPerceptronClassificationModel,test:Dataset[Row]):(MulticlassClassificationEvaluator,Dataset[Row])={
     // compute accuracy on the test set
@@ -57,21 +58,24 @@ object FlightDelayClassifier {
   def loadModel(name:String):MultilayerPerceptronClassificationModel={
     return MultilayerPerceptronClassificationModel.load("../model/"+name+".model")
   }
+  def useModel(model: MultilayerPerceptronClassificationModel, dataSet: Dataset[Row]): DataFrame ={
+    val result = model.transform(dataSet)
+    val predictionAndfeatures = result.select("prediction", "features")
+    return predictionAndfeatures
+  }
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org").setLevel(Level.WARN)
     Logger.getLogger("akka").setLevel(Level.WARN)
     val (model,train,test) = trainModel("../data/test_data/sample_multiclass_classification_data.txt")
-    saveModel(model)
-    val model1 = loadModel("SampleClassifier<04-20-2017>11-36-53")
+    val name = saveModel(model)
+    val model1 = loadModel(name)
     val (evaluator,predictionAndLabels) = findAccuracy(model1,test)
-
-    println(test.select("features").show(3))
-    //println(result.show(3))
-    val input =List(0,0.6,0.9,0)
-
-    //println(model.transform(test.select("features")).show(3))
     println("Test set accuracy = " + evaluator.evaluate(predictionAndLabels))
     println("Precision:" + evaluator.evaluate(predictionAndLabels))
+
+    val predictionResults = useModel(model1,test.select("features"))
+
+    println(predictionResults.show(3))
     spark.stop()
   }
 

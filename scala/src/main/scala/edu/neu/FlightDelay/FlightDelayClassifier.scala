@@ -15,28 +15,28 @@ object FlightDelayClassifier {
     .appName("FlightDelayClassifier")
     .config("spark.master", "local")
     .getOrCreate()
-  val modelName = "SampleClassifier"
+  val modelName = "FlightDelayClassifier"
   def trainModel(dataPath:String): (MultilayerPerceptronClassificationModel, Dataset[Row], Dataset[Row]) ={
     // Load the data stored in LIBSVM format as a DataFrame.
     val data = spark.read.format("libsvm")
       .load(dataPath)
 
     // Split the data into train and test
-    val splits = data.randomSplit(Array(0.6, 0.4), seed = 1234L)
+    val splits = data.randomSplit(Array(0.9, 0.1), seed = 1234L)
     val train = splits(0)
     val test = splits(1)
 
     // specify layers for the neural network:
     // input layer of size 4 (features), two intermediate of size 5 and 4
     // and output of size 3 (classes)
-    val layers = Array[Int](4, 5, 4, 3)
+    val layers = Array[Int](502, 100, 80, 24)
 
     // create the trainer and set its parameters
     val trainer = new MultilayerPerceptronClassifier()
       .setLayers(layers)
       .setBlockSize(128)
       .setSeed(1234L)
-      .setMaxIter(100)
+      .setMaxIter(100000000)
     // train the model
     val model = trainer.fit(train)
     return (model,train,test)
@@ -63,19 +63,30 @@ object FlightDelayClassifier {
     val predictionAndfeatures = result.select("prediction", "features")
     return predictionAndfeatures
   }
+  def getData(path:String):(Dataset[Row],Dataset[Row])={
+    val data = spark.read.format("libsvm")
+      .load(path)
+
+    // Split the data into train and test
+    val splits = data.randomSplit(Array(0.9, 0.1), seed = 1234L)
+    val train = splits(0)
+    val test = splits(1)
+    return (train,test)
+  }
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org").setLevel(Level.WARN)
     Logger.getLogger("akka").setLevel(Level.WARN)
-    val (model,train,test) = trainModel("../data/test_data/sample_multiclass_classification_data.txt")
-    val name = saveModel(model)
-    val model1 = loadModel(name)
+    //val (model,train,test) = trainModel("../data/modeldata_W/DOT_2008_W.libsvm")
+    //val name = saveModel(model)
+    val model1 = loadModel("FlightDelayClassifier<04-20-2017>04-38-59")
+    val (train,test) = getData("../data/modeldata_W/DOT_2008_W.libsvm")
     val (evaluator,predictionAndLabels) = findAccuracy(model1,test)
     println("Test set accuracy = " + evaluator.evaluate(predictionAndLabels))
     println("Precision:" + evaluator.evaluate(predictionAndLabels))
 
-    val predictionResults = useModel(model1,test.select("features"))
+    //val predictionResults = useModel(model1,test.select("features"))
 
-    println(predictionResults.show(3))
+    //println(predictionResults.show(3))
     spark.stop()
   }
 

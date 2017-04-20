@@ -1,3 +1,6 @@
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.ml.classification.MultilayerPerceptronClassifier
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
@@ -40,7 +43,9 @@ object FlightDelayClassifier {
 
     // train the model
     val model = trainer.fit(train)
-
+    val df = DateTimeFormatter.ofPattern("<MM-dd-yyy>hh-mm-ss")
+    val now = ZonedDateTime.now()
+    model.save("../model/SampleClassifier"+df.format(now))
     // compute accuracy on the test set
     val result = model.transform(test)
     val predictionAndLabels = result.select("prediction", "label")

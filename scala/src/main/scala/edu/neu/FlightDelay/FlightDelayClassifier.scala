@@ -98,7 +98,7 @@ object FlightDelayClassifier {
     if(prediction == "[0.0]")
       pw.write("Flight not delayed, with"+evaluator.evaluate(predictionAndLabels)*100+"% confidence.")
     if(prediction=="[1.0]")
-      pw.write("Flight delayed, with "+evaluator.evaluate(predictionAndLabels)*100+"% confidence.")
+      pw.write("Flight delayed, with "+evaluator.evaluate(predictionAndLabels)*100+"%  confidence.")
     pw.close
     spark.stop()
   }

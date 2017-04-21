@@ -4,4 +4,5 @@ gitPush.sh
 .DS_Store
 RemoteSystemsTempFiles/*
 data/modeldata_W/DOT_2008_W.csv
+data/modeldata_W/DOT_2008_W_C.csv
 data/raw/DOT_2008.csv

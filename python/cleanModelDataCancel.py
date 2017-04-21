@@ -32,7 +32,7 @@ del df["Dest"]
 msk = np.random.rand(len(df)) < 0.2
 df = df[msk]
 print(df.shape)
-df.to_csv("../data/"+subfolder+"/DOT_2008_W.csv",index=False)
+df.to_csv("../data/"+subfolder+"/DOT_2008_W_C.csv",index=False)
 #Store data as libsvm
 inpt = "../data/"+subfolder+"/DOT_2008_W_C.csv"
 output = "../data/"+subfolder+"/DOT_2008_W_C.libsvm"

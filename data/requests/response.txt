@@ -1,1 +1,1 @@
-Flight delayed by at least 5 minutes, with 67.08789902654439%  confidence
+Flight delayed by at least 5 minutes, with 67.08789902654439%  confidence. Flight not canceled, with 98.19326403461154% confidence

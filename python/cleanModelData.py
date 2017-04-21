@@ -31,7 +31,7 @@ del df["Dest"]
 #Booleanize delay
 df["Delay"] = df["Delay"].apply(lambda x: 1 if x > 5 else 0)#Delayed more than 5 mintues 
 #Srink data set
-msk = np.random.rand(len(df)) < 0.2
+msk = np.random.rand(len(df)) < 0.5
 df = df[msk]
 print(df.shape)
 df.to_csv("../data/"+subfolder+"/DOT_2008_W.csv",index=False)

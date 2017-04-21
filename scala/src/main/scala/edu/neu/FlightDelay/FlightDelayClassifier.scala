@@ -23,7 +23,7 @@ object FlightDelayClassifier {
       .load(dataPath)
 
     // Split the data into train and test
-    val splits = data.randomSplit(Array(0.9, 0.1), seed = 1234L)
+    val splits = data.randomSplit(Array(0.7, 0.3), seed = 1234L)
     val train = splits(0)
     val test = splits(1)
 
@@ -37,7 +37,7 @@ object FlightDelayClassifier {
       .setLayers(layers)
       .setBlockSize(128)
       .setSeed(1525L)
-      .setMaxIter(10)
+      .setMaxIter(3)
     // train the model
     val model = trainer.fit(train)
     return (model,train,test)
@@ -69,7 +69,7 @@ object FlightDelayClassifier {
       .load(path)
 
     // Split the data into train and test
-    val splits = data.randomSplit(Array(0.9, 0.1), seed = 1234L)
+    val splits = data.randomSplit(Array(0.7, 0.3), seed = 1234L)
     val train = splits(0)
     val test = splits(1)
     return (train,test)
@@ -83,7 +83,6 @@ object FlightDelayClassifier {
     //val (train,test) = getData("../data/modeldata_W/DOT_2008_W.libsvm")
     val (evaluator,predictionAndLabels) = findAccuracy(model,test)
     println("Test set accuracy = " + evaluator.evaluate(predictionAndLabels))
-    //println("Precision:" + evaluator.evaluate(predictionAndLabels))
 
     val predictionResults = useModel(model1,test.select("features"))
 

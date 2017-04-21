@@ -1,0 +1,153 @@
+<html>
+    <head>
+        <title>Flight Delay</title>    </head>
+    <body>
+        <br><br><br>
+<h1 align ="center" >Flight Delay</h1>
+<table align = "center">
+    <form action="NewApplication">  
+    <tr><td>Flight Number</td><td><input type="text" name="FlightNumber"></td></tr>
+    <tr><td>Flight Date</td><td><input type="date" name="Fligt_date"></td></tr>
+    <tr><td>Flight Origin</td><td><select type="" name="FlightOrigin">
+    <option value='6'>ABQ</option>
+    <option value='7'>ATL</option>
+    <option value='8'>AUS</option>
+    <option value='9'>BNA</option>
+    <option value='10'>BOS</option>
+    <option value='11'>BWI</option>
+    <option value='12'>CLE</option>
+    <option value='13'>CLT</option>
+    <option value='14'>CVG</option>
+    <option value='15'>DAL</option>
+    <option value='16'>DCA</option>
+    <option value='17'>DEN</option>
+    <option value='18'>DFW</option>
+    <option value='19'>DTW</option>
+    <option value='20'>EWR</option>
+    <option value='21'>FLL</option>
+    <option value='22'>HNL</option>
+    <option value='23'>HOU</option>
+    <option value='24'>IAD</option>
+    <option value='25'>IAH</option>
+    <option value='26'>IND</option>
+    <option value='27'>JFK</option>
+    <option value='28'>LAS</option>
+    <option value='29'>LAX</option>
+    <option value='30'>LGA</option>
+    <option value='31'>MCI</option>
+    <option value='32'>MC0</option>
+    <option value='33'>MDW</option>
+    <option value='34'>MEM</option>
+    <option value='35'>MIA</option>
+    <option value='36'>MKE</option>
+    <option value='37'>MSP</option>
+    <option value='38'>MSY</option>
+    <option value='39'>OAK</option>
+    <option value='40'>ORD</option>
+    <option value='41'>PDX</option>
+    <option value='42'>PHL</option>
+    <option value='43'>PHX</option>
+    <option value='44'>PIT</option>
+    <option value='45'>RDU</option>
+    <option value='46'>SAN</option>
+    <option value='47'>SAT</option>
+    <option value='48'>SEA</option>
+    <option value='49'>SFO</option>
+    <option value='50'>SJC</option>
+    <option value='51'>SLC</option>
+    <option value='52'>SMF</option>
+    <option value='53'>SNA</option>
+    <option value='54'>STL</option>
+    <option value='55'>TPA</option>
+         
+    
+    
+    </select>
+    
+    
+    </td></tr>
+    <tr><td>Flight Dest.</td><td><select  name ="FlightDestination">
+    <option value='56'>ABQ</option>
+    <option value='57'>ATL</option>
+    <option value='58'>AUS</option>
+    <option value='59'>BNA</option>
+    <option value='60'>BOS</option>
+    <option value='61'>BWI</option>
+    <option value='62'>CLE</option>
+    <option value='63'>CLT</option>
+    <option value='64'>CVG</option>
+    <option value='65'>DAL</option>
+    <option value='66'>DCA</option>
+    <option value='67'>DEN</option>
+    <option value='68'>DFW</option>
+    <option value='69'>DTW</option>
+    <option value='70'>EWR</option>
+    <option value='71'>FLL</option>
+    <option value='72'>HNL</option>
+    <option value='73'>HOU</option>
+    <option value='74'>IAD</option>
+    <option value='75'>IAH</option>
+    <option value='76'>IND</option>
+    <option value='77'>JFK</option>
+    <option value='78'>LAS</option>
+    <option value='79'>LAX</option>
+    <option value='80'>LGA</option>
+    <option value='81'>MCI</option>
+    <option value='82'>MC0</option>
+    <option value='83'>MDW</option>
+    <option value='84'>MEM</option>
+    <option value='85'>MIA</option>
+    <option value='86'>MKE</option>
+    <option value='87'>MSP</option>
+    <option value='88'>MSY</option>
+    <option value='89'>OAK</option>
+    <option value='90'>ORD</option>
+    <option value='91'>PDX</option>
+    <option value='92'>PHL</option>
+    <option value='93'>PHX</option>
+    <option value='94'>PIT</option>
+    <option value='95'>RDU</option>
+    <option value='96'>SAN</option>
+    <option value='97'>SAT</option>
+    <option value='98'>SEA</option>
+    <option value='99'>SFO</option>
+    <option value='100'>SJC</option>
+    <option value='101'>SLC</option>
+    <option value='102'>SMF</option>
+    <option value='103'>SNA</option>
+    <option value='104'>STL</option>
+    <option value='105'>TPA</option>
+    
+    </select>
+    </td></tr>
+    
+    <tr><td>Origin Rain</td><td>0<input type="range" name="OriginRain"  min="0" max="1687" value ="0" step="5" onchange="showValue(this.value)"/><span id="range">0</span> mm</td></tr>
+    <tr><td>Origin Snow</td><td>0<input type="range"  name="OriginSnow" min="0" max="295" value ="0" step="5" onchange="showValue1(this.value)"/><span id="range1">0</span> mm</td></tr>
+    <tr><td>Destination Rain</td><td>0<input type="range" name= "DestRain" min="0" max="1687" value ="0" step="5" onchange="showValue2(this.value)" /><span id="range2">0</span>mm</td></tr>
+    <tr><td>Destination Snow</td><td>0<input type="range"  name= "DestSnow" min="0" max="295" value ="0" step="5" onchange="showValue3(this.value)"/><span id="range3">0</span>mm</td></tr>
+    
+    <tr><td></td><td><input type="submit"></td></tr>
+    </form>
+
+</table>
+
+<script type="text/javascript">
+function showValue(newValue)
+{
+	document.getElementById("range").innerHTML=newValue;
+}
+function showValue1(newValue)
+{
+	document.getElementById("range1").innerHTML=newValue;
+}
+function showValue2(newValue)
+{
+	document.getElementById("range2").innerHTML=newValue;
+}
+function showValue3(newValue)
+{
+	document.getElementById("range3").innerHTML=newValue;
+}
+</script>
+    </body>
+    </html>

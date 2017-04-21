@@ -1,6 +1,6 @@
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-
+import java.io._
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.ml.classification.{MultilayerPerceptronClassificationModel, MultilayerPerceptronClassifier}
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
@@ -75,7 +75,7 @@ object FlightDelayClassifier {
     Logger.getLogger("org").setLevel(Level.WARN)
     Logger.getLogger("akka").setLevel(Level.WARN)
     val delayModel= "FlightDelayClassifier"
-    val requestPath =   "../data/requests/example_requests.libsvm"
+    val requestPath =   "../data/requests/requests.libsvm"
 
     /*
     Uncomment these lines to trian a new model
@@ -92,10 +92,14 @@ object FlightDelayClassifier {
     println(x)
     val prediction = predictionResults.select("prediction").first().toString()
     println(predictionResults.select("prediction").first())
+    val (evaluator,predictionAndLabels) = findAccuracy(dModel,request)
+    //Save to file
+    val pw = new PrintWriter(new File("../data/requests/response.txt" ))
     if(prediction == "[0.0]")
-      println("Not delayed")
+      pw.write("Flight not delayed, with"+evaluator.evaluate(predictionAndLabels)*100+"% confidence.")
     if(prediction=="[1.0]")
-      println("delayed")
+      pw.write("Flight delayed, with "+evaluator.evaluate(predictionAndLabels)*100+"% confidence.")
+    pw.close
     spark.stop()
   }
 

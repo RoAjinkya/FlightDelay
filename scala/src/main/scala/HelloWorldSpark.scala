@@ -10,5 +10,8 @@ object SparkHelloWorld {
     val wc = filesc.flatMap(line => line.split(" ")).map(word => (word, 1)).reduceByKey(_+_)
     wc.saveAsTextFile("wc_out.txt")
   }
+  def printMe()={
+    println("adsfasdf")
+  }
 
 }

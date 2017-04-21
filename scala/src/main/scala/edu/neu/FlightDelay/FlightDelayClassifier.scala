@@ -14,8 +14,10 @@ object FlightDelayClassifier {
     .builder
     .appName("FlightDelayClassifier")
     .config("spark.executor.memory", "4g")
+    .config("spark.driver.memory", "4g")
     .config("spark.master", "local")
     .getOrCreate()
+
   val modelName = "FlightDelayClassifier"
   def trainModel(dataPath:String): (MultilayerPerceptronClassificationModel, Dataset[Row], Dataset[Row]) ={
     // Load the data stored in LIBSVM format as a DataFrame.
@@ -37,7 +39,7 @@ object FlightDelayClassifier {
       .setLayers(layers)
       .setBlockSize(128)
       .setSeed(1525L)
-      .setMaxIter(3)
+      .setMaxIter(500)
     // train the model
     val model = trainer.fit(train)
     return (model,train,test)

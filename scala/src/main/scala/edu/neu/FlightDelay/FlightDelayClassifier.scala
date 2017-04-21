@@ -66,29 +66,36 @@ object FlightDelayClassifier {
     val predictionAndfeatures = result.select("prediction", "features")
     return predictionAndfeatures
   }
-  def getData(path:String):(Dataset[Row],Dataset[Row])={
+  def getData(path:String):Dataset[Row]={
     val data = spark.read.format("libsvm")
       .load(path)
-
-    // Split the data into train and test
-    val splits = data.randomSplit(Array(0.7, 0.3), seed = 1234L)
-    val train = splits(0)
-    val test = splits(1)
-    return (train,test)
+    return data
   }
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org").setLevel(Level.WARN)
     Logger.getLogger("akka").setLevel(Level.WARN)
+    val delayModel= "FlightDelayClassifier"
+    val requestPath =   "../data/requests/example_requests.libsvm"
+
+    /*
+    Uncomment these lines to trian a new model
     val (model,train,test) = trainModel("../data/modeldata_W/DOT_2008_W.libsvm")
     val name = saveModel(model)
-    val model1 = loadModel(name)
-    //val (train,test) = getData("../data/modeldata_W/DOT_2008_W.libsvm")
     val (evaluator,predictionAndLabels) = findAccuracy(model,test)
     println("Test set accuracy = " + evaluator.evaluate(predictionAndLabels))
+    */
 
-    val predictionResults = useModel(model1,test.select("features"))
-
-    println(predictionResults.show(3))
+    val dModel = loadModel(delayModel)
+    val request= getData(requestPath)
+    val predictionResults = useModel(dModel,request.select("features"))
+    val x= request.select("features").first()
+    println(x)
+    val prediction = predictionResults.select("prediction").first().toString()
+    println(predictionResults.select("prediction").first())
+    if(prediction == "[0.0]")
+      println("Not delayed")
+    if(prediction=="[1.0]")
+      println("delayed")
     spark.stop()
   }
 

@@ -4,9 +4,7 @@
 <body>
 <h1 align="center">Final Result</h1>
 
-<table>
-    <tr><td> <b><%= request.getAttribute("Reposne") %></b>! </td></tr>
-</table>
 
+<h3 align="center"><b><%= request.getAttribute("Reposne") %></b>!</h3>
 </body>
 </html>

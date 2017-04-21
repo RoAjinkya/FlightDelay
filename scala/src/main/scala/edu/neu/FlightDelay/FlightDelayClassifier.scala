@@ -36,8 +36,8 @@ object FlightDelayClassifier {
     val trainer = new MultilayerPerceptronClassifier()
       .setLayers(layers)
       .setBlockSize(128)
-      .setSeed(1234L)
-      .setMaxIter(100000000)
+      .setSeed(1525L)
+      .setMaxIter(10)
     // train the model
     val model = trainer.fit(train)
     return (model,train,test)
@@ -79,11 +79,11 @@ object FlightDelayClassifier {
     Logger.getLogger("akka").setLevel(Level.WARN)
     val (model,train,test) = trainModel("../data/modeldata_W/DOT_2008_W.libsvm")
     val name = saveModel(model)
-    val model1 = loadModel("FlightDelayClassifier<04-20-2017>04-38-59")
+    val model1 = loadModel(name)
     //val (train,test) = getData("../data/modeldata_W/DOT_2008_W.libsvm")
-    val (evaluator,predictionAndLabels) = findAccuracy(model1,test)
+    val (evaluator,predictionAndLabels) = findAccuracy(model,test)
     println("Test set accuracy = " + evaluator.evaluate(predictionAndLabels))
-    println("Precision:" + evaluator.evaluate(predictionAndLabels))
+    //println("Precision:" + evaluator.evaluate(predictionAndLabels))
 
     val predictionResults = useModel(model1,test.select("features"))
 

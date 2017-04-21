@@ -11,7 +11,7 @@ apl = []
 for ap in apf:
     apl.append(ap.strip())
 df = pd.DataFrame()
-for month in range(1,4):
+for month in range(1,13):
     df = df.append(pd.read_csv("../data/DOT_2008_"+str(month)+"_Weather.csv"),ignore_index=True)
 #Clean data
 df["Delay"]=df["ArrDelay"]
@@ -30,10 +30,12 @@ del df["Origin"]
 del df["Dest"]
 #Booleanize delay
 df["Delay"] = df["Delay"].apply(lambda x: 1 if x > 5 else 0)#Delayed more than 5 mintues 
-#df = df[0:50000]
+#Srink data set
+msk = np.random.rand(len(df)) < 0.2
+df = df[msk]
 print(df.shape)
-#df.to_csv("../data/"+subfolder+"/DOT_2008_W.csv",index=False)
+df.to_csv("../data/"+subfolder+"/DOT_2008_W.csv",index=False)
 #Store data as libsvm
 inpt = "../data/"+subfolder+"/DOT_2008_W.csv"
 output = "../data/"+subfolder+"/DOT_2008_W.libsvm"
-#os.system("python csv2libsvm.py "+inpt+" "+output+" 0 True")
+os.system("python csv2libsvm.py "+inpt+" "+output+" 0 True")

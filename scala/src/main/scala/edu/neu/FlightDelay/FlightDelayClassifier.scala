@@ -13,6 +13,7 @@ object FlightDelayClassifier {
   val spark = SparkSession
     .builder
     .appName("FlightDelayClassifier")
+    .config("spark.executor.memory", "4g")
     .config("spark.master", "local")
     .getOrCreate()
   val modelName = "FlightDelayClassifier"
@@ -29,7 +30,7 @@ object FlightDelayClassifier {
     // specify layers for the neural network:
     // input layer of size 4 (features), two intermediate of size 5 and 4
     // and output of size 3 (classes)
-    val layers = Array[Int](502, 100, 80, 24)
+    val layers = Array[Int](106-1, 25, 20, 6)
 
     // create the trainer and set its parameters
     val trainer = new MultilayerPerceptronClassifier()
@@ -76,17 +77,17 @@ object FlightDelayClassifier {
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org").setLevel(Level.WARN)
     Logger.getLogger("akka").setLevel(Level.WARN)
-    //val (model,train,test) = trainModel("../data/modeldata_W/DOT_2008_W.libsvm")
-    //val name = saveModel(model)
+    val (model,train,test) = trainModel("../data/modeldata_W/DOT_2008_W.libsvm")
+    val name = saveModel(model)
     val model1 = loadModel("FlightDelayClassifier<04-20-2017>04-38-59")
-    val (train,test) = getData("../data/modeldata_W/DOT_2008_W.libsvm")
+    //val (train,test) = getData("../data/modeldata_W/DOT_2008_W.libsvm")
     val (evaluator,predictionAndLabels) = findAccuracy(model1,test)
     println("Test set accuracy = " + evaluator.evaluate(predictionAndLabels))
     println("Precision:" + evaluator.evaluate(predictionAndLabels))
 
-    //val predictionResults = useModel(model1,test.select("features"))
+    val predictionResults = useModel(model1,test.select("features"))
 
-    //println(predictionResults.show(3))
+    println(predictionResults.show(3))
     spark.stop()
   }
 

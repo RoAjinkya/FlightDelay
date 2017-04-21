@@ -96,10 +96,11 @@ object FlightDelayClassifier {
     //Save to file
     val pw = new PrintWriter(new File("../data/requests/response.txt" ))
     if(prediction == "[0.0]")
-      pw.write("Flight not delayed, with"+evaluator.evaluate(predictionAndLabels)*100+"% confidence.")
+      pw.write("Flight not delayed, with "+evaluator.evaluate(predictionAndLabels)*100+"% confidence")
     if(prediction=="[1.0]")
-      pw.write("Flight delayed, with "+evaluator.evaluate(predictionAndLabels)*100+"%  confidence.")
+      pw.write("Flight delayed by at least 5 minutes, with "+evaluator.evaluate(predictionAndLabels)*100+"%  confidence")
     pw.close
+    println("Done")
     spark.stop()
   }
 

@@ -34,16 +34,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Driver {
-
-	private static final String FILENAME = "E:\\test\\filename.txt";
+	private static final String ROOT ="/Users/daniel/OneDrive/Documents/Northeastern/CSYE7200Scala/FlightDelay";
+	private static final String REQUEST = "/data/requests/request.txt";
 
 	public  String  GetResponse(String FlightNumber, Date Date1,String Origin, String Dest,String OriginRain, String OriginSnow,String DestRain, String DestSnow) throws IOException, JSONException {
 		
-		System.out.println(FlightNumber +"  "+Date1 +" " +Origin+" "+Dest  +" " +OriginRain +" "+OriginSnow +" "+DestRain+" "+DestSnow);
+		System.out.println(FlightNumber.trim() +" "+Date1 +" " +Origin+" "+Dest  +" " +OriginRain +" "+OriginSnow +" "+DestRain+" "+DestSnow);
 		
 		 String result = null;
 		 
-		 try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {
+		 try (BufferedWriter bw = new BufferedWriter(new FileWriter(ROOT+REQUEST))) {
 
 			 Calendar c = Calendar.getInstance();
 			 c.setTime(Date1);
@@ -66,22 +66,22 @@ public class Driver {
 		 
 		 
 		 //   String sourceFile1Path = "/home/programcreek/Desktop/s1";
-			String sourceFile2Path = "E:\\test\\file2.libsvm";
+			String sourceFile2Path = "/data/requests/Training.libsvm";
 	 
-			String mergedFilePath = "E:\\test\\filenamemerged.libsvm";
+			String mergedFilePath = "/data/requests/requests.libsvm";
 	 
 			File[] files = new File[2];
-			files[0] = new File(FILENAME);
-			files[1] = new File(sourceFile2Path);
+			files[0] = new File(ROOT+REQUEST);
+			files[1] = new File(ROOT+sourceFile2Path);
 	 
-			File mergedFile = new File(mergedFilePath);
-	 
+			File mergedFile = new File(ROOT+mergedFilePath);
+			mergedFile.delete();
 			mergeFiles(files, mergedFile);
-		 
+			
 			//Call to the method
 			//String  filename = "E:\\test\\file2.libsvm";
 			
-			return   readresponse("E:\\test\\Response.txt");
+			return   readresponse(ROOT+"/data/requests/response.txt");
 			
 		
 	}

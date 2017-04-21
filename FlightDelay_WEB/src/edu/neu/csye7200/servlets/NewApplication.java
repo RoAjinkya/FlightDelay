@@ -52,7 +52,6 @@ public class NewApplication extends HttpServlet {
 					request.getParameter("DestRain"),
 					request.getParameter("DestSnow")
 					);
-			System.out.println("res"+Response);
 			request.setAttribute("Reposne", Response);
 		} catch (JSONException | ParseException e) {
 			// TODO Auto-generated catch block

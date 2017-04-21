@@ -7,7 +7,7 @@ import scala.io.Source
 /**
   * Created by Sai on 4/8/2017.
   */
-object HolidayClassification {
+object HolidayClassifications{
 
   import java.util.Calendar
   val cal = Calendar.getInstance()

@@ -4,7 +4,7 @@
 		module="flightdelay$sbt_2.10"
 		revision="1.0"
 		status="integration"
-		publication="20170421021401"
+		publication="20170422114852"
 	/>
 	<configurations>
 		<conf name="default" visibility="public"/>

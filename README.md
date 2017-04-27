@@ -1,3 +1,2 @@
 # FlightDelay
-This is spark project that predicts if a US flight will be delayed be asdf
- asdf asdf
+This is spark project that predicts if a US flight will be delayed. It implements a Spark neural net to create these predictions. The neural net was trained on all flight data from 2008 that can be found [here](http://stat-computing.org/dataexpo/2009/the-data.html). To increase the accuracy of the data we looked up the weather at the origin and destination airports. We also included holiday information that would aid in predicting the flight delays. 
